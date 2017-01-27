@@ -6,72 +6,68 @@ public class CannonScript : MonoBehaviour {
 
     private Rigidbody rb;
     [SerializeField] private GameObject cannon;
-    public Vector3 direction = Vector3.zero;
-    private bool shoted;
+    private bool isCollied;
     private float collidedTime;
-    private float thrust;
-    private const float MAX_THRUST = 3500.0f;
+    public float thrust;
+    public Vector3 direction;
 
     // Use this for initialization
     void Start()
     {
-        shoted = false;
+        isCollied = false;
         collidedTime = 0.0f;
-        thrust = 0.0f;
         rb = GetComponent<Rigidbody>();
+        release();
     }
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            thrust += (thrust > MAX_THRUST ? 0 :  3 * Time.deltaTime * MAX_THRUST);
-            Debug.LogFormat("You pressed space");
-        }
+        //if (Input.GetKey(KeyCode.Space))
+        //{
+        //    thrust += (thrust > MAX_THRUST ? 0 :  3 * Time.deltaTime * MAX_THRUST);
+        //    Debug.LogFormat("You pressed space");
+        //}
 
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            release(thrust);
-            thrust = 0.0f;
-        }
+        //if (Input.GetKeyUp(KeyCode.Space))
+        //{
+        //    release(thrust);
+        //    thrust = 0.0f;
+        //}
 
-        if( shoted)
+        if( isCollied)
         {
             collidedTime += Time.deltaTime;
             if( collidedTime > 0.5f)
             {
-                reSpawnConnon();
+                //reSpawnConnon();
                 Destroy(gameObject);
             }
         }
         
     }
 
-    private void release(float thrust)
+    public void release()
     {
-        Vector3 direction = Vector3.one;
-        direction.x = 0.0f;
-        direction.z = 1.3f;
+        //Vector3 direction = Vector3.one;
+        //direction.x = 0.0f;
+        //direction.z = 1.3f;
         rb.AddForce(direction * thrust);
-        shoted = true;
+        Debug.LogFormat("Ball is Shooting");
     }
 
-    private void reSpawnConnon()
-    {
-        GameObject spawnedCannon;
-        Quaternion startRotation = Quaternion.Euler(Vector3.zero);
-        Vector3 spawnLocation = Vector3.zero;
-        spawnLocation.y = 10.0f;
-        spawnedCannon = GameObject.Instantiate(cannon, spawnLocation, startRotation) as GameObject;
+    //private void reSpawnConnon()
+    //{
+    //    GameObject spawnedCannon;
+    //    Quaternion startRotation = Quaternion.Euler(Vector3.zero);
+    //    Vector3 spawnLocation = Vector3.zero;
+    //    spawnLocation.y = 10.0f;
+    //    spawnedCannon = GameObject.Instantiate(cannon, spawnLocation, startRotation) as GameObject;
 
-    }
+    //}
 
     public void OnCollisionExit(Collision collision)
     {
-        if( collision.gameObject.name != "Plane")
-        {
-            shoted = true;
-        }
+        isCollied = true;
     }
     
 }

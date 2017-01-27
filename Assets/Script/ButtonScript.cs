@@ -16,44 +16,49 @@ public class ButtonScript : MonoBehaviour {
 	void Update () {
 	}
 
-    private void OnTriggerEnter(Collider other)
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    Debug.LogFormat("Trigger Object is: {0} ", other.gameObject.name);
+    //    if( other.gameObject.name == "Laser")
+    //    {
+    //        LaserScript ls = other.gameObject.GetComponent<LaserScript>();
+
+    //        if (ls != null)
+    //        {
+    //            ls.changeMode();
+    //            int mode = ls.getMode();
+
+    //            changeMode(mode);
+
+    //        }
+    //    }
+    //}
+
+    public void changeMode(int mode)
     {
-        Debug.LogFormat("Trigger Object is: {0} ", other.gameObject.name);
-        if( other.gameObject.name == "Laser")
+        Color newColor = new Color(0.0f, 0.0f, 0.0f);
+        newColor.r = mode == 0 ? 1.0f : 0.0f;
+        newColor.b = mode == 1 ? 1.0f : 0.0f;
+        newColor.g = mode == 2 ? 1.0f : 0.0f;
+
+        rend.material.SetColor("_Color", newColor);
+
+        GameObject child = transform.GetChild(0).gameObject;
+
+        TextMesh textMesh = child.GetComponent<TextMesh>();
+        if (textMesh != null)
         {
-            LaserScript ls = other.gameObject.GetComponent<LaserScript>();
-
-            if (ls != null)
+            if (mode == 0)
             {
-                ls.changeMode();
-                int mode = ls.getMode();
-
-                Color newColor = new Color(0.0f, 0.0f, 0.0f);
-                newColor.r = mode == 0 ? 1.0f : 0.0f;
-                newColor.b = mode == 1 ? 1.0f : 0.0f;
-                newColor.g = mode == 2 ? 1.0f : 0.0f;
-                
-                rend.material.SetColor("_Color", newColor);
-
-                GameObject child = transform.GetChild(0).gameObject;
-
-                TextMesh textMesh = child.GetComponent<TextMesh>();
-                if(textMesh != null)
-                {
-                    if (mode == 0)
-                    {
-                        textMesh.text = "Laser\nMode";
-                    }
-                    else if (mode == 1)
-                    {
-                        textMesh.text = "Cannon\nMode";
-                    }
-                    else if (mode == 2)
-                    {
-                        textMesh.text = "None\nMode";
-                    }
-                }
-
+                textMesh.text = "Laser\nMode";
+            }
+            else if (mode == 1)
+            {
+                textMesh.text = "Cannon\nMode";
+            }
+            else if (mode == 2)
+            {
+                textMesh.text = "None\nMode";
             }
         }
     }
