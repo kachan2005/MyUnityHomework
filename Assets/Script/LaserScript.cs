@@ -28,6 +28,7 @@ public class LaserScript : MonoBehaviour {
     CapsuleCollider capCollider;
     Vector3 defaultLocation;
     Quaternion defaultRotation;
+    bool isShooting = false;
 
     //Cannon variable
     Quaternion spawnRotation = Quaternion.Euler(Vector3.zero);
@@ -57,14 +58,14 @@ public class LaserScript : MonoBehaviour {
 
         if (sameCollideObject && currentTime > DWELLING_TIME)
         {
-            if(mode == 0)
+            if(mode == 0 && !isShooting)
             {
+                isShooting = true;
                 capCollider.isTrigger = false;
                 Rigidbody rb = gameObject.AddComponent<Rigidbody>();
 
                 rb.mass = 10.0f;
                 rb.AddForce(transform.up * 60000.0f);
-                Debug.LogFormat("Now should be shooting");
             }
             else if(mode == 1)
             {
@@ -76,7 +77,7 @@ public class LaserScript : MonoBehaviour {
                 CannonScript cs = spawnedCannon.GetComponent<CannonScript>();
                 if(cs != null)
                 {
-                    cs.thrust = 20000.0f;
+                    cs.thrust = 20000.0f + 5000.0f * (currentCollideObject.transform.position.y < 1.0f ? 1.0f : currentCollideObject.transform.position.y / 5.0f);
                     cs.direction = transform.up;
                 }
                 leftCannon = !leftCannon;
@@ -93,19 +94,28 @@ public class LaserScript : MonoBehaviour {
         Ray ray = new Ray(transform.position, transform.up);
         RaycastHit rayHit;
 
-        if (Physics.Raycast(ray, out rayHit, 100.0f))
+        if (Physics.Raycast(ray, out rayHit, 500.0f))
         {
             //Debug.LogFormat("You hit {0} on the forward!", rayHit.collider.name, debugTime);
             GameObject thisCollideObject = rayHit.collider.gameObject;
             if( thisCollideObject != currentCollideObject)
             {
-                if(thisCollideObject.name == "Button")
+                if(thisCollideObject.name == "ModeButton")
                 {
                     ButtonScript bs = thisCollideObject.GetComponent<ButtonScript>();
                     if(bs != null)
                     {
                         this.changeMode();
                         bs.changeMode(mode);
+                    }
+                }
+
+                if (thisCollideObject.name == "ResetButton")
+                {
+                    BrickSpawn bs = transform.parent.parent.GetComponent<BrickSpawn>();
+                    if (bs != null)
+                    {
+                        bs.reloadTower();
                     }
                 }
                 resetLaserColor();
@@ -138,8 +148,10 @@ public class LaserScript : MonoBehaviour {
     {
         transform.localPosition = defaultLocation;
         transform.localRotation = defaultRotation;
+        //Debug.LogFormat("Time: {0} : collided and destroy rigidBody", debugTime);
         Destroy(GetComponent<Rigidbody>());
         capCollider.isTrigger = true;
+        isShooting = false;
         resetLaserColor();
     }
 
@@ -148,11 +160,11 @@ public class LaserScript : MonoBehaviour {
     {
         Color newColor = rend.material.GetColor("_TintColor");
         //time += Time.deltaTime;
-        newColor.b += (1.0f / DWELLING_TIME) * Time.deltaTime;
-        newColor.r -= (1.0f / DWELLING_TIME) * Time.deltaTime;
+        newColor.r += (1.0f / DWELLING_TIME) * Time.deltaTime;
+        newColor.g -= (0.6f / DWELLING_TIME) * Time.deltaTime;
 
         //Debug.LogFormat("{3}: Color = ({0}, {1}, {2})", newColor.r, newColor.b, newColor.g, time);
-        if (newColor.r >= 0.0f)
+        if (newColor.g >= 0.0f)
         {
             rend.material.SetColor("_TintColor", newColor);
         }
@@ -161,7 +173,7 @@ public class LaserScript : MonoBehaviour {
 
     void resetLaserColor()
     {
-        Color newColor = new Color(1.0f, 0.3f, 0.0f, 0.5f);
+        Color newColor = new Color(0.0f, 0.6f, 0.1f, 0.2f);
         rend.material.SetColor("_TintColor", newColor);
         currentTime = 0.0f;
     }

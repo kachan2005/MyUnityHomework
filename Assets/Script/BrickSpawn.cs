@@ -1,20 +1,53 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class BrickSpawn : MonoBehaviour {
 
     [SerializeField]
     private GameObject brickToSpawn;
     Vector3 center;
+    private GameObject tower;
+    private GameObject towerClone;
+
+    string towerPath, circlePath;
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
+        circlePath = "Assets/GameObjects/Circle.prefab";
+        towerPath = "Assets/GameObjects/Tower.prefab";
         center = transform.position;
+        createTower();
 
-        GameObject tower = new GameObject();
-        
+
+        Debug.Log("Done Create Tower");
+
+    }
+
+    // Update is called once per frame
+    void Update () {
+		
+	}
+
+    public void reloadTower()
+    {
+        Destroy(tower);
+        tower = Instantiate(towerClone, towerClone.transform.position, towerClone.transform.rotation);
+        tower.name = "Tower";
+
+        tower.transform.parent = transform;
+
+        tower.SetActive(true);
+    }
+
+    void createTower()
+    {
+        tower = new GameObject();
+
         GameObject circle = createCircle();
 
         circle.transform.parent = tower.transform;
@@ -39,26 +72,24 @@ public class BrickSpawn : MonoBehaviour {
             circleClone = GameObject.Instantiate(circle, spwanLocation, spwanRotation);
             circleClone.name = "Circle " + i;
             circleClone.transform.parent = tower.transform;
-
         }
-        
 
-        tower.transform.parent = transform;
         Vector3 towerScale = tower.transform.localScale;
-        //towerScale.x = 3.0f;
-        //towerScale.z = 3.0f;
         tower.transform.localScale = towerScale * 3.0f;
+        towerClone = Instantiate(tower, tower.transform.position, tower.transform.rotation);
 
         tower.name = "Tower";
-        string prefabPath = "Assets/GameObjects/Tower.prefab";
-        PrefabUtility.CreatePrefab(prefabPath, tower);
+        towerClone.name = "TowerClone";
 
+        tower.transform.parent = transform;
+        towerClone.transform.parent = transform;
+
+        towerClone.SetActive(false);
+
+        #if UNITY_EDITOR
+        PrefabUtility.CreatePrefab(towerPath, tower);
+        #endif
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 
     GameObject createCircle()
     {
@@ -140,9 +171,10 @@ public class BrickSpawn : MonoBehaviour {
         }
 
         circle.name = "Circle";
-        string prefabPath = "Assets/GameObjects/Circle.prefab";
-        PrefabUtility.CreatePrefab(prefabPath, circle);
 
+        #if UNITY_EDITOR
+        PrefabUtility.CreatePrefab(circlePath, circle);
+        #endif
         return circle;
     }
 

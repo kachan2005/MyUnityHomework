@@ -15,24 +15,7 @@ public class ButtonScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	}
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    Debug.LogFormat("Trigger Object is: {0} ", other.gameObject.name);
-    //    if( other.gameObject.name == "Laser")
-    //    {
-    //        LaserScript ls = other.gameObject.GetComponent<LaserScript>();
-
-    //        if (ls != null)
-    //        {
-    //            ls.changeMode();
-    //            int mode = ls.getMode();
-
-    //            changeMode(mode);
-
-    //        }
-    //    }
-    //}
+    
 
     public void changeMode(int mode)
     {
