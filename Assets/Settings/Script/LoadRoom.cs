@@ -5,13 +5,37 @@ using UnityEngine;
 using System.IO;
 
 public class LoadRoom : MonoBehaviour {
+
+    public Material selectedMaterial;
+
+    private bool loaded = false;
+    private float time = 0;
+
+    private Material oldMaterial;
     
 
-    private void OnTriggerEnter(Collider other)
+    private void Update()
     {
-        if (other.gameObject.name == "Stick" && OVRInput.GetDown(OVRInput.Button.One))
+        if (OVRInput.GetDown(OVRInput.Button.Three))
         {
             Load();
+            time = 0.0f;
+            loaded = true;
+            oldMaterial = gameObject.GetComponent<Renderer>().material;
+            gameObject.GetComponent<Renderer>().material = selectedMaterial;
+        }
+        
+        if( loaded)
+        {
+            if(time < 2.5f)
+            {
+                time += Time.deltaTime;
+            }
+            else
+            {
+                loaded = false;
+                gameObject.GetComponent<Renderer>().material = oldMaterial;
+            }
         }
     }
 

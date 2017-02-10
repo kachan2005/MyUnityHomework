@@ -4,23 +4,44 @@ using UnityEngine;
 using System.IO;
 public class SaveRoom : MonoBehaviour {
 
-    public StreamWriter file;
+    public Material selectedMaterial;
 
-    private void OnTriggerStay(Collider other)
+    private bool saved = false;
+    private float time = 0;
+
+    private Material oldMaterial;
+
+
+    private void Update()
     {
-        if(other.gameObject.name == "Stick" && OVRInput.GetDown(OVRInput.Button.One))
+        if (OVRInput.GetDown(OVRInput.Button.Four))
         {
             Save();
+            time = 0.0f;
+            saved = true;
+            oldMaterial = gameObject.GetComponent<Renderer>().material;
+            gameObject.GetComponent<Renderer>().material = selectedMaterial;
         }
-        
-            
+
+        if (saved)
+        {
+            if (time < 2.5f)
+            {
+                time += Time.deltaTime;
+            }
+            else
+            {
+                saved = false;
+                gameObject.GetComponent<Renderer>().material = oldMaterial;
+            }
+        }
     }
 
     private void Save()
     {
         Debug.Log("Save Call");
         File.Delete("C:\\Users\\knc007\\Desktop\\MyUnityHomework-master\\Assets\\data.txt");
-        file = new StreamWriter("C:\\Users\\knc007\\Desktop\\MyUnityHomework-master\\Assets\\data.txt", true);
+        StreamWriter file = new StreamWriter("C:\\Users\\knc007\\Desktop\\MyUnityHomework-master\\Assets\\data.txt", true);
 
         GameObject objects = GameObject.Find("Objects");
         for(int i = 0; i < objects.transform.childCount; i++)

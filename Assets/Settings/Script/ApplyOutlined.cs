@@ -26,21 +26,6 @@ public class ApplyOutlined : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (isSelected)
-            {
-                count = 0;
-                oldMaterials = new Material[100, 10];
-                applyHighLights(gameObject);
-            }
-            else
-            {
-                count = 0;
-                unSelectHighLights(gameObject);
-                oldMaterials = new Material[100, 10];
-            }
-        }
 
         StayGround();
         

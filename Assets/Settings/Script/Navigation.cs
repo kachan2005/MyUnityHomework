@@ -14,6 +14,9 @@ public class Navigation : MonoBehaviour {
 
     private bool trigger;
 
+    private Vector3 groundScale = new Vector3(1, 10, 1);
+    public float set_distance;
+
     // Use this for initialization
     void Start () {
         menu = GameObject.Find("Menu").GetComponent<MenuSignals>();
@@ -25,10 +28,22 @@ public class Navigation : MonoBehaviour {
 		if( menu.mode == menu.MODE_SELECT_BALL || menu.mode == menu.MODE_ADD || menu.mode == menu.MODE_TELEPORT)
         {
             gameObject.GetComponent<Renderer>().enabled = true;
-            Vector3 position = stick.transform.position + stick.transform.up * distance;
+            float diff = distance - set_distance;
+            float r_length = distance + (diff < 0 ? 0 : diff * diff);
+            Vector3 position = stick.transform.position + stick.transform.up * r_length;
 
-            position.y = menu.mode != menu.MODE_SELECT_BALL ? 0 : position.y;
-            transform.position = position;
+            if(menu.mode == menu.MODE_SELECT_BALL)
+            {
+                transform.position = position;
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                position.y = menu.mode != menu.MODE_SELECT_BALL ? 0 : position.y;
+                transform.position = position;
+                transform.localScale = groundScale;
+            }
+
             if (Input.GetAxis("Oculus_GearVR_RIndexTrigger") == 1)
             {
                 if (!trigger)

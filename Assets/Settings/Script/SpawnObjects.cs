@@ -53,7 +53,10 @@ public class SpawnObjects : MonoBehaviour {
             o.layer = LayerMask.NameToLayer("grabble");
             o.transform.parent = GameObject.Find("Objects").transform;
             Rigidbody r = o.AddComponent<Rigidbody>();
-            r.mass = 1000;
+            r.isKinematic = tag == "whiteboard";
+            Collider c = o.GetComponent<Collider>();
+            c.isTrigger = tag == "whiteboard";
+            r.mass = tag == "whiteboard" ? 1 : 10000;
             ApplyOutlined outline = o.AddComponent<ApplyOutlined>();
             outline.theMaterial = outline_material;
         }
@@ -94,7 +97,7 @@ public class SpawnObjects : MonoBehaviour {
             o.layer = LayerMask.NameToLayer("grabble");
             o.transform.parent = GameObject.Find("Objects").transform;
             Rigidbody r = o.AddComponent<Rigidbody>();
-            r.mass = 1000;
+            r.mass = tag == "whiteboard" ? 1 : 10000;
             ApplyOutlined outline = o.AddComponent<ApplyOutlined>();
             outline.theMaterial = outline_material;
 

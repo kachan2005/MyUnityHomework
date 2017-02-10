@@ -15,7 +15,7 @@ public class NewObjectCollideDetect : MonoBehaviour {
             Collider[] colliders = gameObject.GetComponents<Collider>();
             for (int i = 0; i < colliders.Length; i++)
             {
-                colliders[i].isTrigger = false;
+                colliders[i].isTrigger = gameObject.tag == "whiteboard";
             }
             Destroy(gameObject.GetComponent<NewObjectCollideDetect>());
         }

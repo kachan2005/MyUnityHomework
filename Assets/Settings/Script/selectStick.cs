@@ -54,7 +54,7 @@ public class selectStick : MonoBehaviour {
             {
                 TextMesh t = GameObject.Find("AddObjectName").GetComponent<TextMesh>();
                 t.text = other.gameObject.tag;
-                //Debug.LogFormat("Trigger Object {0} with tag {1}", other.gameObject.name, other.gameObject.tag);
+                Debug.LogFormat("Trigger Object {0} with tag {1}", other.gameObject.name, other.gameObject.tag);
             }
         }
     }
