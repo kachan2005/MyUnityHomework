@@ -11,8 +11,19 @@ public class parseXYZFile : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+        //parseFile();
+    }
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+    public void parseFile()
+    {
+
         string[] lines = System.IO.File.ReadAllLines(fileName);
-        
+
 
         transform.localScale = new Vector3(unitInch, unitInch, unitInch);
 
@@ -40,9 +51,4 @@ public class parseXYZFile : MonoBehaviour {
 
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

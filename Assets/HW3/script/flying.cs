@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class flying : MonoBehaviour {
 
@@ -16,9 +17,15 @@ public class flying : MonoBehaviour {
 
     private int visualMode = 1;
 
+    public bool debug;
+
+    public bool isStop = false;
+
 
 	// Use this for initialization
 	void Start () {
+
+        GameObject.Find("CheckPoints").GetComponent<parseXYZFile>().parseFile();
 
         getCheckPoint(0).GetComponent<Check_point>().setChecked();
 
@@ -36,43 +43,16 @@ public class flying : MonoBehaviour {
         parseTime -= Time.deltaTime;
 
         
-        if( parseTime <= 0)
+        if( parseTime <= 0 && ! debug)
         {
             if(checkpoint_Index < checkpoint_Size) playTime += Time.deltaTime;
 
             //update position upon speed
-            gameObject.GetComponent<Rigidbody>().velocity = transform.forward * speed;
+            if(!isStop)
+                gameObject.GetComponent<Rigidbody>().velocity = transform.forward * speed;
+            else
+                gameObject.GetComponent<Rigidbody>().velocity = transform.forward * 2.0f;
 
-            //update rotation upon input
-            //rotate by x-axis
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                Vector3 rotation = transform.rotation.eulerAngles;
-                rotation.x -= 1;
-                transform.rotation = Quaternion.Euler(rotation);
-            }
-            else if (Input.GetKey(KeyCode.DownArrow))
-            {
-                Vector3 rotation = transform.rotation.eulerAngles;
-                rotation.x += 1;
-                transform.rotation = Quaternion.Euler(rotation);
-            }
-
-            //rotate by y-axis
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                Vector3 rotation = transform.rotation.eulerAngles;
-                rotation.y -= 1;
-                transform.rotation = Quaternion.Euler(rotation);
-            }
-            else if (Input.GetKey(KeyCode.RightArrow))
-            {
-                Vector3 rotation = transform.rotation.eulerAngles;
-                rotation.y += 1;
-                transform.rotation = Quaternion.Euler(rotation);
-            }
-
-           
         }
 
         if (Input.GetKeyDown(KeyCode.S))
@@ -122,6 +102,9 @@ public class flying : MonoBehaviour {
         transform.position = getCheckPoint(checkpoint_Index - 1).transform.position;
         Vector3 target = getCheckPoint(checkpoint_Index).transform.position;
         transform.forward = target - transform.position;
+
+        GameObject controlBall = GameObject.Find("ControlBall");
+        controlBall.transform.localRotation = transform.localRotation;
     }
 
 
@@ -171,28 +154,54 @@ public class flying : MonoBehaviour {
         {
             Transform checkpoint = getCheckPoint(checkpoint_Index).transform;
             direction = checkpoint.position - transform.position;
+            direction.Normalize();
             distance = direction.magnitude / 20.0f;
             distance = Mathf.Sqrt(distance);
         }
 
         //update count down text if it is paused
         string text = "";
-        if (parseTime > 2.5f) GameObject.Find("CountDown").GetComponent<GUIText>().text = "3";
-        else if (parseTime > 1.5f) GameObject.Find("CountDown").GetComponent<GUIText>().text = "2";
-        else if (parseTime > 0.5f) GameObject.Find("CountDown").GetComponent<GUIText>().text = "1";
-        else if (parseTime > -0.5f) GameObject.Find("CountDown").GetComponent<GUIText>().text = "Go!";
+        GameObject.Find("Direction").GetComponent<Text>().text = "";
+        if (parseTime > 2.5f) GameObject.Find("CountDown").GetComponent<Text>().text = "3";
+        else if (parseTime > 1.5f) GameObject.Find("CountDown").GetComponent<Text>().text = "2";
+        else if (parseTime > 0.5f) GameObject.Find("CountDown").GetComponent<Text>().text = "1";
+        else if (parseTime > -0.5f) GameObject.Find("CountDown").GetComponent<Text>().text = "Go!";
         else if (rechedTarget)
         {
-            if(checkpoint_Index == checkpoint_Size) GameObject.Find("Notification").GetComponent<GUIText>().text = "Game End!";
-            else GameObject.Find("Notification").GetComponent<GUIText>().text = "Recach Checkpoint " + (checkpoint_Index - 1);
+            if(checkpoint_Index == checkpoint_Size) GameObject.Find("CountDown").GetComponent<Text>().text = "Game End!";
+            else GameObject.Find("CountDown").GetComponent<Text>().text = "Recach Checkpoint " + (checkpoint_Index - 1);
             rechedTarget = false;
         }
+        else if(GameObject.Find("CountDown").GetComponent<Text>().text == "")
+        {
+            text = "Direction \n";
+            float x = Mathf.Round(transform.forward.x * 100);
+            float y = Mathf.Round(transform.forward.y * 100);
+            float z = Mathf.Round(transform.forward.z * 100);
+            text += string.Format("Plane:  ({0}, {1}, {2}) \n", x, y, z);
+            x = Mathf.Round(direction.x * 100);
+            y = Mathf.Round(direction.y * 100);
+            z = Mathf.Round(direction.z * 100);
+            text += string.Format("Target:  ({0}, {1}, {2}) \n", x, y, z);
+            x = Mathf.Round((transform.forward.x - direction.x) * 100);
+            y = Mathf.Round((transform.forward.y - direction.y) * 100);
+            z = Mathf.Round((transform.forward.z - direction.z) * 100);
+            text += string.Format("Diff:    ({0}, {1}, {2}) \n", x, y, z);
+            //x = Mathf.Round(transform.position.x * 100);
+            //y = Mathf.Round(transform.position.y * 100);
+            //z = Mathf.Round(transform.position.z * 100);
+            //text += string.Format("Positoin:  ({0}, {1}, {2}) \n", x, y, z);
+            GameObject.Find("Direction").GetComponent<Text>().text = text;
+        }
+        
 
+
+        distance = Mathf.Round(distance * 100) / 100.0f;
         //update play info
         text = "Time: " + playTime + "s\n";
         text += "Checkpoint: " + checkpoint_Index + "\n";
         text += "Distance: " + distance + "m\n";
-        GameObject.Find("Time").GetComponent<GUIText>().text = text;
+        GameObject.Find("Time").GetComponent<Text>().text = text;
 
         UpdateArrow(direction, distance);
     }
