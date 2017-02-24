@@ -9,11 +9,11 @@ namespace Leap.Unity
     /// </summary>
     public class ControlBall : MonoBehaviour
     {
-
-
         public float distanceLimit;
         public float rotateSpeed;
         public float maxAngle;
+        public Color activeColor;
+        private Color originalColor;
         
         [SerializeField]
         private PinchDetector _pinchDetectorR;
@@ -27,6 +27,8 @@ namespace Leap.Unity
             {
                 _pinchDetectorR = value;
             }
+
+
         }
 
         GameObject aircraft;
@@ -37,15 +39,13 @@ namespace Leap.Unity
 
         void Start()
         {
+            originalColor = GetComponent<Renderer>().material.color;
             lastPosition = currentPosition = new Vector3();
             aircraft = GameObject.Find("Aircraft");
         }
 
         void Update()
         {
-            //transform.position = aircraft.transform.position +
-            //    aircraft.transform.up * 0.3f +
-            //    aircraft.transform.forward * 0.15f;
             float distance = 100.0f;
 
             if (_pinchDetectorR != null)
@@ -58,10 +58,12 @@ namespace Leap.Unity
             if (_pinchDetectorR != null && _pinchDetectorR.IsActive && distance < distanceLimit)
             {
                 transformSingleAnchor();
+                GetComponent<Renderer>().material.color = activeColor;
             }
-            
-            //aircraft.transform.rotation = transform.localRotation;
-
+            else
+            {
+                GetComponent<Renderer>().material.color = originalColor;
+            }
 
         }
 
