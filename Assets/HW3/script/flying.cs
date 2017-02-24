@@ -20,6 +20,7 @@ public class flying : MonoBehaviour {
     public bool debug;
 
     public bool isStop = false;
+    bool initial = true;
 
 
 	// Use this for initialization
@@ -42,10 +43,10 @@ public class flying : MonoBehaviour {
         
         parseTime -= Time.deltaTime;
 
-        
-        if( parseTime <= 0 && ! debug)
+
+        if (checkpoint_Index < checkpoint_Size) playTime += initial ? 0 : Time.deltaTime;
+        if ( parseTime <= 0 && ! debug)
         {
-            if(checkpoint_Index < checkpoint_Size) playTime += Time.deltaTime;
 
             //update position upon speed
             if(!isStop)
@@ -53,6 +54,10 @@ public class flying : MonoBehaviour {
             else
                 gameObject.GetComponent<Rigidbody>().velocity = transform.forward * 2.0f;
 
+        }
+        else
+        {
+            initial = false;
         }
 
         if (Input.GetKeyDown(KeyCode.S))
@@ -154,9 +159,8 @@ public class flying : MonoBehaviour {
         {
             Transform checkpoint = getCheckPoint(checkpoint_Index).transform;
             direction = checkpoint.position - transform.position;
+            distance = direction.magnitude;
             direction.Normalize();
-            distance = direction.magnitude / 20.0f;
-            distance = Mathf.Sqrt(distance);
         }
 
         //update count down text if it is paused
@@ -198,7 +202,7 @@ public class flying : MonoBehaviour {
 
         distance = Mathf.Round(distance * 100) / 100.0f;
         //update play info
-        text = "Time: " + playTime + "s\n";
+        text = "Time: " + Mathf.Round(playTime * 100) / 100.0f  + "s\n";
         text += "Checkpoint: " + checkpoint_Index + "\n";
         text += "Distance: " + distance + "m\n";
         GameObject.Find("Time").GetComponent<Text>().text = text;
@@ -209,6 +213,8 @@ public class flying : MonoBehaviour {
 
     void UpdateArrow(Vector3 direction, float distance)
     {
+        distance = distance / 20.0f;
+        distance = Mathf.Sqrt(distance);
         GameObject arrow = GameObject.Find("Arrow1");
         arrow.transform.forward = direction;
         arrow.transform.RotateAround(arrow.transform.position, arrow.transform.forward, 400.0f * playTime);

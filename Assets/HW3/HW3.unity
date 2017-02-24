@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -3586,7 +3586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5e51535c5a08d4397e2cadb5f0c6d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: C:\Users\Ka\Documents\CSE 165 HW1\MyUnityHomework\competitiontrack2017.txt
+  fileName: C:\Users\knc007\Desktop\GitHub\MyUnityHomework\competitiontrack2017.txt
   checkpoint: {fileID: 1862591534427802, guid: 9cc4ebd7a5438d0469f9d6d9065ec183, type: 2}
 --- !u!1 &2074369440
 GameObject:
