@@ -29,8 +29,18 @@ public class RockAction : MonoBehaviour {
     private void OnCollisionEnter(Collision collision)
     {
 
+        if (isAircraft(collision.gameObject.transform))
+        {
+            GameObject.Find("Aircraft").GetComponent<aircraft_collide>().collide_rock(gameObject);
+            //Debug.LogFormat("{0} has collide with aircraft", gameObject.name);
+
+            Destroy(gameObject);
+            return;
+        }
+
+
         //Debug.LogFormat("{0} collide with object {1}, time remain = {2}", gameObject.name, collision.gameObject.name, collideCount);
-        if( collideCount-- <= 0)
+        if ( collideCount-- <= 0)
         {
             Destroy(gameObject);
             return;
@@ -53,15 +63,7 @@ public class RockAction : MonoBehaviour {
             case "back_boundary":
                 newForce.z *= -3;
                 break;
-
-            default:
-                if (isAircraft(collision.gameObject.transform))
-                {
-                    //GameObject.Find("Aircraft").GetComponent<aircraft_collide>().handle_Collide(gameObject);
-                    //Debug.LogFormat("{0} has collide with aircraft", gameObject.name);
-                }
-
-                break;
+                
         }
         //Debug.LogFormat("Before force = ({0}. {1}, {2})", c.force.x, c.force.y, c.force.z);
         //Debug.LogFormat("After force = ({0}. {1}, {2})", newForce.x, newForce.y, newForce.z);

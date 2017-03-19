@@ -24,7 +24,7 @@ public class CoinAction : MonoBehaviour {
 
         if (isAircraft(collision.gameObject.transform))
         {
-            //GameObject.Find("Aircraft").GetComponent<aircraft_collide>().handle_Collide(gameObject);
+            GameObject.Find("Aircraft").GetComponent<aircraft_collide>().collide_coin(gameObject);
             Debug.LogFormat("{0} has collide with aircraft", gameObject.name);
             
             Destroy(gameObject);

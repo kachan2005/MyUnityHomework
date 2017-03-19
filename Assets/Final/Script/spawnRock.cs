@@ -20,6 +20,7 @@ public class spawnRock : MonoBehaviour {
     float time;
 
     public int count;
+    public int total_count = 0;
 
     // Use this for initialization
     void Start()
@@ -40,7 +41,7 @@ public class spawnRock : MonoBehaviour {
                     {
                         int objectType = (int)(Random.Range(0, 10));
                         Object spawnObject = rock;
-                        if (objectType > 10)
+                        if (objectType > 7)
                             spawnObject = coin;
 
 
@@ -55,6 +56,7 @@ public class spawnRock : MonoBehaviour {
 
                         newObject = GameObject.Instantiate(spawnObject, position, rotation) as GameObject;
                         newObject.transform.parent = checkpoints.transform;
+                        newObject.name = "Object " + total_count++;
                     }
 
                 }
@@ -77,9 +79,9 @@ public class spawnRock : MonoBehaviour {
 
         for (int i = 0; i < hasObject; i++)
         {
-            int objectType = (int)(Random.Range(0, 2));
+            int objectType = (int)(Random.Range(0, 10));
             Object spawnObject = rock;
-            if (objectType == 1)
+            if (objectType > 7)
                 spawnObject = coin;
 
 
@@ -94,6 +96,8 @@ public class spawnRock : MonoBehaviour {
 
             newObject = GameObject.Instantiate(spawnObject, position, rotation) as GameObject;
             newObject.transform.parent = checkpoints.transform;
+            newObject.name = "Object " + total_count++;
+            total_count = total_count % 100000;
         }
     }
 }
