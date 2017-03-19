@@ -22,6 +22,8 @@ public class spawnRock : MonoBehaviour {
     public int count;
     public int total_count = 0;
 
+    public bool system_pause = true;
+
     // Use this for initialization
     void Start()
     {
@@ -34,14 +36,14 @@ public class spawnRock : MonoBehaviour {
                 for (float z = -z_size; z < z_size - step; z += step)
                 {
                     int hasObject = (int)(Random.Range(0, spawnRatio));
-                    if (hasObject > 3)
+                    if (hasObject > 4)
                         continue;
 
                     for (int i = 0; i < hasObject; i++)
                     {
                         int objectType = (int)(Random.Range(0, 10));
                         Object spawnObject = rock;
-                        if (objectType > 7)
+                        if (objectType > 8)
                             spawnObject = coin;
 
 
@@ -68,7 +70,8 @@ public class spawnRock : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         count = checkpoints.transform.childCount;
-        time += Time.deltaTime;
+        if(!system_pause) 
+            time += Time.deltaTime;
 
         int hasObject = 0;
         if(time > spawnTime)
@@ -81,7 +84,7 @@ public class spawnRock : MonoBehaviour {
         {
             int objectType = (int)(Random.Range(0, 10));
             Object spawnObject = rock;
-            if (objectType > 7)
+            if (objectType > 8)
                 spawnObject = coin;
 
 

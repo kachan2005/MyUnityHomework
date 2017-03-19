@@ -6,25 +6,79 @@ using UnityStandardAssets.Utility;
 public class RockAction : MonoBehaviour {
     
     ConstantForce c;
-    Vector3 force;
+    Rigidbody r;
+    public Vector3 force;
+    public Vector3 velocity;
     public int collideCount;
+
+    public bool system_pause;
+    bool prev_pause;
 
     // Use this for initialization
     void Start () {
+        r = GetComponent<Rigidbody>();
         c = GetComponent<ConstantForce>();
         c.force = new Vector3(
                 Random.Range(-80, 80),
                 Random.Range(-80, 80),
                 Random.Range(-80, 80)
             );
-        
+
+        system_pause = true;
+        prev_pause = false;
+
+
+        if (system_pause != prev_pause)
+        {
+            if (system_pause)
+            {
+                velocity = r.velocity;
+                r.velocity = new Vector3();
+                storeForce();
+
+                GetComponent<Collider>().isTrigger = true;
+                r.isKinematic = true;
+            }
+            else
+            {
+                GetComponent<Collider>().isTrigger = false;
+                r.isKinematic = false;
+
+                r.velocity = velocity;
+                restoreForce();
+            }
+            prev_pause = system_pause;
+        }
+
     }
 	
 	// Update is called once per frame
-	void Update () {
-        //GetComponent<Collider>.force
-        
-	}
+	void Update ()
+    {
+        if (system_pause != prev_pause)
+        {
+            if (system_pause)
+            {
+                velocity = r.velocity;
+                r.velocity = new Vector3();
+                storeForce();
+
+                GetComponent<Collider>().isTrigger = true;
+                r.isKinematic = true;
+            }
+            else
+            {
+                GetComponent<Collider>().isTrigger = false;
+                r.isKinematic = false;
+
+                r.velocity = velocity;
+                restoreForce();
+            }
+            prev_pause = system_pause;
+        }
+    }
+
+    
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -81,5 +135,14 @@ public class RockAction : MonoBehaviour {
             t = t.parent;
         }
         return false;
+    }
+
+    public void storeForce() {
+        force = c.force;
+        c.force = new Vector3();
+    }
+
+    public void restoreForce() {
+        c.force = force;
     }
 }

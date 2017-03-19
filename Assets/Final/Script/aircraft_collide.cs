@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Utility;
 
 public class aircraft_collide : MonoBehaviour {
 
@@ -9,12 +10,16 @@ public class aircraft_collide : MonoBehaviour {
     public float animation_time;
 
     public float time;
+    
 
-    public float play_time = 0.0f;
-    public float money = 0.0f;
+    private system_menu system_menu;
+    private PauseSystem pasuse_system;
 
 	// Use this for initialization
 	void Start () {
+        system_menu = GameObject.Find("System_Menu").GetComponent<system_menu>();
+        pasuse_system = GameObject.Find("Menu").GetComponent<PauseSystem>();  
+
 
         GameObject lights = GameObject.Find("Lights");
         for (int i = 0; i < lights.transform.childCount; i++)
@@ -26,7 +31,6 @@ public class aircraft_collide : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        play_time += Time.deltaTime;
 
         if (isCollided)
         {
@@ -39,7 +43,14 @@ public class aircraft_collide : MonoBehaviour {
                 isCollided = false;
                 time = 0;
             }
-            
+        }
+
+        if(pasuse_system.systemPause) {
+            GetComponent<AutoMoveAndRotate>().enabled = false;
+        }
+        else
+        {
+            GetComponent<AutoMoveAndRotate>().enabled = true;
         }
     }
 
@@ -53,8 +64,8 @@ public class aircraft_collide : MonoBehaviour {
             lights.transform.GetChild(i).GetComponent<light_collided>().isCollided = true;
         }
 
-        if(collidedObject != g.name)
-            money -= play_time;
+        if (collidedObject != g.name)
+            system_menu.hitRock();
 
         collidedObject = g.name;
     }
@@ -65,7 +76,7 @@ public class aircraft_collide : MonoBehaviour {
         isCollided = true;
 
         if (collidedObject != g.name)
-            money += Mathf.Log10( play_time + 1);
+            system_menu.getCoin();
         
         collidedObject = g.name;
     }

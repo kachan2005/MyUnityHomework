@@ -26,6 +26,9 @@ public class navigation : MonoBehaviour {
                 Destroy(points.transform.GetChild(i).gameObject);
             }
 
+            Vector3 axis;
+            float angle;
+            transform.parent.rotation.ToAngleAxis(out angle, out axis);
             for(int i = 0; i < checkpoints.transform.childCount; i++)
             {
                 Transform checkpoint = checkpoints.transform.GetChild(i);
@@ -40,17 +43,22 @@ public class navigation : MonoBehaviour {
 
                 GameObject spawnedPoint;
                 Vector3 position = new Vector3();
-                Quaternion rotation = Quaternion.Euler(Vector3.zero);
+                Quaternion rotation = new Quaternion();
+                //Quaternion rotation = transform.parent.rotation;
 
                 spawnedPoint = GameObject.Instantiate(point, position, rotation) as GameObject;
                 spawnedPoint.transform.parent = points.transform;
                 spawnedPoint.transform.localPosition = diff.normalized * (0.5f * distance / 500.0f);
+                //spawnedPoint.transform.rotation *= Quaternion.LookRotation(transform.parent.forward, transform.parent.up);
 
-                if(checkpoint.gameObject.tag == "rock")
+                spawnedPoint.transform.RotateAround(transform.position, axis, -angle);
+
+                if (checkpoint.gameObject.tag == "rock")
                     spawnedPoint.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
                 else if (checkpoint.gameObject.tag == "coin")
                     spawnedPoint.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
             }
+            //transform.localRotation = transform.parent.rotation;
 
             time = 0.0f;
         }

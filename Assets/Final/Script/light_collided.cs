@@ -13,7 +13,7 @@ public class light_collided : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         originalColor = GetComponent<Renderer>().material.GetColor("_TintColor");
-        Debug.LogFormat("{0}: color = ({1}, {2}, {3})", gameObject.name, originalColor.r, originalColor.g, originalColor.b);
+        //Debug.LogFormat("{0}: color = ({1}, {2}, {3})", gameObject.name, originalColor.r, originalColor.g, originalColor.b);
 	}
 	
 	// Update is called once per frame
@@ -30,7 +30,7 @@ public class light_collided : MonoBehaviour {
                         Random.Range(0, 255) / 255.0f
                     );
 
-                Debug.LogFormat("{0}: color = ({1}, {2}, {3})", gameObject.name, c.r, c.g, c.b);
+                //Debug.LogFormat("{0}: color = ({1}, {2}, {3})", gameObject.name, c.r, c.g, c.b);
             }
             else
             {

@@ -4,17 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - chair
-  - desk
-  - whiteboard
-  - cabinet
-  - locker
-  - Occluder
-  - menu
-  - 3DTV
-  - room
-  - rock
   - coin
+  - rock
+  - selectable
   layers:
   - Default
   - TransparentFX
@@ -24,12 +16,12 @@ TagManager:
   - UI
   - 
   - 
-  - grabble
-  - menu
-  - 
-  - 
-  - 
-  - 
+  - Ethan
+  - MazeWalls
+  - MazeTurret
+  - MazeTurretBullet
+  - Bg
+  - FPSWeapon
   - 
   - 
   - 
@@ -51,4 +43,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: GUI
+    uniqueID: 2379361113
     locked: 0
