@@ -19,7 +19,7 @@ public class navigation : MonoBehaviour {
 	void Update () {
         time += Time.deltaTime;
 
-        if(time > 1.0f)
+        if(time > 0.1f)
         {
             for(int i = 0; i < points.transform.childCount; i++)
             {
@@ -32,8 +32,8 @@ public class navigation : MonoBehaviour {
                 Vector3 diff = checkpoint.position - transform.position;
                 float distance = diff.magnitude;
 
-                Debug.LogFormat("{0}: distance = {1}, distance2 = {5}, diff = ({2},{3},{4}), diff.normalized = ({6},{7},{8})", 
-                    checkpoint.name, distance, diff.x, diff.y, diff.z, (0.5f * distance / 500.0f), diff.normalized.x, diff.normalized.y, diff.normalized.z);
+                //Debug.LogFormat("{0}: distance = {1}, distance2 = {5}, diff = ({2},{3},{4}), diff.normalized = ({6},{7},{8})", 
+                //    checkpoint.name, distance, diff.x, diff.y, diff.z, (0.5f * distance / 500.0f), diff.normalized.x, diff.normalized.y, diff.normalized.z);
 
                 if (distance > 500)
                     continue;
@@ -45,6 +45,11 @@ public class navigation : MonoBehaviour {
                 spawnedPoint = GameObject.Instantiate(point, position, rotation) as GameObject;
                 spawnedPoint.transform.parent = points.transform;
                 spawnedPoint.transform.localPosition = diff.normalized * (0.5f * distance / 500.0f);
+
+                if(checkpoint.gameObject.tag == "rock")
+                    spawnedPoint.GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f);
+                else if (checkpoint.gameObject.tag == "coin")
+                    spawnedPoint.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f);
             }
 
             time = 0.0f;
