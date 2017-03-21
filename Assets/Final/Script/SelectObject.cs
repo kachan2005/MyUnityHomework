@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectObject : MonoBehaviour {
-
-
-
     public bool system_pause;
     public bool isDisplayed;
     
@@ -20,6 +17,11 @@ public class SelectObject : MonoBehaviour {
     public GameObject R_Hand;
     
     public float ratio;
+
+    public AudioClip teleport;
+    public AudioClip selectItem;
+
+    private bool holdObject = false;
 
     system_menu s;
 
@@ -66,6 +68,9 @@ public class SelectObject : MonoBehaviour {
                 position.y = 2;
                 t.localPosition = position;
                 activative = true;
+
+
+                AudioSource.PlayClipAtPoint(teleport, transform.position);
             }
 
             if(s.mode == 2) //select a object
@@ -73,12 +78,17 @@ public class SelectObject : MonoBehaviour {
 
             if(s.mode == 3)
             {
-                if (!inBounard()) return;
-
-                GameObject.Find("ManipulationMenu").GetComponent<Manipulation>().modifiedObject.transform.position = transform.position;
+                if(!activative) {
+                    holdObject = !holdObject;
+                    AudioSource.PlayClipAtPoint(selectItem, selectedObject.transform.position);
+                    activative = true;
+                }
             }
+        }
 
-            
+        if(s.mode == 3 && holdObject) {
+            if (!inBounard()) return;
+            GameObject.Find("ManipulationMenu").GetComponent<Manipulation>().modifiedObject.transform.position = transform.position;
         }
 
 
@@ -93,8 +103,8 @@ public class SelectObject : MonoBehaviour {
     
     private void OnTriggerStay(Collider other)
     {
-        //Debug.LogFormat("Select Object: other object name {0}", other.gameObject.name);
-        if (activative && !trigger && other.gameObject.tag == "changeable" )
+        Debug.LogFormat("Select Object: other object name {0}", other.gameObject.name);
+        if (activative && !trigger && other.gameObject.tag == "changeable" && GameObject.Find("System_Menu").GetComponent<system_menu>().mode == 2)
         {
             trigger = true;
 
@@ -103,6 +113,24 @@ public class SelectObject : MonoBehaviour {
             GameObject.Find("ManipulationMenu").GetComponent<Manipulation>().modifiedObject = selectedObject;
             GameObject.Find("SelectedTitle").GetComponent<Text>().text = selectedObject.name;
             GameObject.Find("RotateY").GetComponent<Slider>().value = selectedObject.transform.localRotation.y;
+            GameObject.Find("RotateY").transform.GetChild(5).GetComponent<Text>().text = "" + selectedObject.transform.localRotation.y;
+
+            bool showLight = selectedObject.GetComponent<Light>() != null;
+            GameObject.Find("LightMenu").GetComponent<DisplayMenu>().displayList(showLight);
+            if (showLight) {
+                Color c = selectedObject.GetComponent<Light>().color;
+                GameObject.Find("Light Red").GetComponent<Slider>().value = c.r * 255;
+                GameObject.Find("Light Red").transform.GetChild(5).GetComponent<Text>().text = "" + c.r * 255;
+                GameObject.Find("Light Green").GetComponent<Slider>().value = c.g * 255;
+                GameObject.Find("Light Green").transform.GetChild(5).GetComponent<Text>().text = "" + c.g * 255;
+                GameObject.Find("Light Blue").GetComponent<Slider>().value = c.b * 255;
+                GameObject.Find("Light Blue").transform.GetChild(5).GetComponent<Text>().text = "" + c.b * 255;
+                GameObject.Find("Light Intensity").GetComponent<Slider>().value = selectedObject.GetComponent<Light>().intensity;
+                GameObject.Find("Light Intensity").transform.GetChild(5).GetComponent<Text>().text = "" + selectedObject.GetComponent<Light>().intensity;
+            }
+
+
+            AudioSource.PlayClipAtPoint(selectItem, selectedObject.transform.position);
         }
     }
     
@@ -112,6 +140,13 @@ public class SelectObject : MonoBehaviour {
     {
         isDisplayed = b;
         GetComponent<Renderer>().enabled = isDisplayed;
+        GetComponent<Light>().enabled = isDisplayed;
+
+        if (b == false) {
+            selectedObject = null; 
+            GameObject.Find("ManipulationMenu").GetComponent<Manipulation>().modifiedObject = null;
+            GameObject.Find("SelectedTitle").GetComponent<Text>().text = "Select A Object";
+        }
     }
 
     public void applySystemPause(bool isPaused)
@@ -121,9 +156,6 @@ public class SelectObject : MonoBehaviour {
         {
             selectedObject = null;
             display(false);
-
-            GameObject.Find("ManipulationMenu").GetComponent<Manipulation>().modifiedObject = selectedObject;
-            GameObject.Find("SelectedTitle").GetComponent<Text>().text = "Select A Object";
         }
     }
 

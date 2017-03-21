@@ -14,6 +14,10 @@ public class laserSpawn : MonoBehaviour {
     private PauseSystem pause;
     private system_menu system;
 
+    private float time = 0;
+    private bool initial = false;
+
+
     // Use this for initialization
     void Start () {
         l = GetComponent<LineRenderer>();
@@ -26,9 +30,17 @@ public class laserSpawn : MonoBehaviour {
     void Update()
     {
         if (pause.systemPause && 
-            
             OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))  //used for menu selection or interaction
         {
+            time += Time.deltaTime;
+            if(initial == false || time > 4)
+            {
+                GetComponent<AudioSource>().mute = false;
+                GetComponent<AudioSource>().Play();
+                initial = true;
+                time = 0;
+            }
+
             l.enabled = true;
             Vector3 coord = menuCanvas.transform.position;
             Vector3 a = transform.position;
@@ -50,13 +62,16 @@ public class laserSpawn : MonoBehaviour {
 
                 crosshair.transform.position = p;
                 Vector3 lc = crosshair.transform.localPosition;
-                lc.z = 0;
+                lc.z = 0.2f;
                 crosshair.transform.localPosition = lc;
             }
         }
         else
         {
+            GetComponent<AudioSource>().mute = true;
             l.enabled = false;
+            time = 0;
+            initial = false;
         }
         
     }

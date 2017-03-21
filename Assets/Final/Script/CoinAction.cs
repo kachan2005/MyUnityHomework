@@ -15,29 +15,10 @@ public class CoinAction : MonoBehaviour {
 	void Update () {
         
 	}
-
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    Debug.LogFormat("{0} collide with object {1}", gameObject.name, collision.gameObject.name);
-
-
-    //    if (isAircraft(collision.gameObject.transform))
-    //    {
-    //        GameObject.Find("Aircraft").GetComponent<aircraft_collide>().collide_coin(gameObject);
-    //        Debug.LogFormat("{0} has collide with aircraft", gameObject.name);
-            
-    //        Destroy(gameObject);
-    //        return;
-    //    }
-        
-    //}
+    
 
     private void OnTriggerEnter(Collider other)
     {
-
-        //Debug.LogFormat("{0} collide with object {1}", gameObject.name, other.gameObject.name);
-
-
         if (isAircraft(other.gameObject.transform))
         {
             GameObject.Find("Aircraft").GetComponent<aircraft_collide>().collide_coin(gameObject);

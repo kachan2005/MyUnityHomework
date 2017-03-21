@@ -26,7 +26,7 @@ public class PauseSystem : MonoBehaviour {
 	void Update () {
         Color c = transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>().color;
 
-        if(c == Color.red && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)) {
+        if(c == Color.red && OVRInput.Get(OVRInput.Button.PrimaryHandTrigger)) {
             if(!trigger) {
                 systemPause = !systemPause;
                 trigger = true;
@@ -35,12 +35,11 @@ public class PauseSystem : MonoBehaviour {
                 updateSystemPause();
             }
         }
-        else if(OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger)){
+        else if(OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger)){
             trigger = false;
         }
 
         GameObject.Find("FPS").GetComponent<Text>().text = "FPS: " + Mathf.Round(100f * 1.0f / Time.deltaTime) / 100.0f;
-
         
 	}
 
@@ -50,6 +49,11 @@ public class PauseSystem : MonoBehaviour {
     }
 
     public void updateSystemPause() {
+        
+        if(systemPause == false) {
+            GameObject.Find("Aircraft").GetComponent<AudioSource>().Play();
+        }
+
 
         checkpoints.GetComponent<spawnRock>().system_pause = systemPause;
         for (int i = 0; i < checkpoints.transform.childCount; i++)

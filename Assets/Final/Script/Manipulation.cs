@@ -20,10 +20,30 @@ public class Manipulation : MonoBehaviour {
     {
         if (modifiedObject == null) return;
 
-        //Vector3 angle = modifiedObject.transform.localRotation.;
         Vector3 angle = new Vector3(0, value, 0);
         modifiedObject.transform.localRotation = Quaternion.Euler(angle);
+    }
 
-        //modifiedObject.transform.Rotate(new Vector3(0,1,0), value);
+    public void updateLightColor(float value, int index) {
+
+        Color c = modifiedObject.GetComponent<Light>().color;
+
+        switch(index)
+        {
+            case 1:
+                c.r = value;
+                break;
+            case 2:
+                c.g = value;
+                break;
+            case 3:
+                c.b = value;
+                break;
+            case 4:
+                modifiedObject.GetComponent<Light>().intensity = value;
+                break;
+        }
+
+        modifiedObject.GetComponent<Light>().color = c;
     }
 }

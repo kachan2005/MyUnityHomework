@@ -11,12 +11,7 @@ public class SwitchTiles : MonoBehaviour {
     GameObject wall_top;
     GameObject wall_ground;
 
-    public Material tile1;
-    public Material tile2;
-    public Material tile3;
-    public Material tile4;
-    public Material tile5;
-
+    private float time = 0;
 
     // Use this for initialization
     void Start () {
@@ -31,29 +26,21 @@ public class SwitchTiles : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if( GameObject.Find("Menu").GetComponent<PauseSystem>().systemPause == false) {
+            time += Time.deltaTime;
+            GetComponent<AudioSource>().mute = false;
+            if(time > 4) {
+                GetComponent<AudioSource>().Play();
+                time = 0;
+            }
+
+        }
+        else {
+            GetComponent<AudioSource>().mute = true;
+        }
 	}
 
-    public void switchTiles(int tileIndex) {
-        Material m = null;
-        switch(tileIndex)
-        {
-            case 1:
-                m = tile1;
-                break;
-            case 2:
-                m = tile2;
-                break;
-            case 3:
-                m = tile3;
-                break;
-            case 4:
-                m = tile4;
-                break;
-            case 5:
-                m = tile5;
-                break;
-        }
+    public void switchTiles(Material m) {
 
         for (int i = 0; i < wall_left.transform.childCount; i++)
         {

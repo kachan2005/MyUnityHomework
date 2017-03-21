@@ -59,6 +59,7 @@ public class RockAction : MonoBehaviour {
     {
         //Debug.LogFormat("{0} collide with object {1}, time remain = {2}", gameObject.name, collision.gameObject.name, collideCount);
 
+
         if (isAircraft(collision.gameObject.transform))
         {
             GameObject.Find("Aircraft").GetComponent<aircraft_collide>().collide_rock(gameObject);

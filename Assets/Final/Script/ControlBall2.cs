@@ -17,6 +17,8 @@ public class ControlBall2 : MonoBehaviour {
     private Vector3 lastPosition;
     private Vector3 currentPosition;
 
+    private float time = 0;
+
     public bool system_pause;
     // Use this for initialization
     void Start ()
@@ -28,20 +30,34 @@ public class ControlBall2 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(isTrigger) {
+        if (isTrigger)
+        {
+            GetComponent<AudioSource>().mute = false;
             //Debug.LogFormat("{0} is been triggered", gameObject.name);
             if (OVRInput.Get(OVRInput.Button.SecondaryHandTrigger))
             {
+                time += Time.deltaTime;
+                if( time > 0.5f) {
+                    time = 0.0f;
+                    GetComponent<AudioSource>().Play();
+                }
                 //Debug.LogFormat("Before {0} is activate, isFirstActivate = {1}, isActivate = {2}", gameObject.name, isFirstActivate, isActivate);
                 isFirstActivate = isActivate == false;
                 isActivate = true;
                 //Debug.LogFormat("After {0} is activate, isFirstActivate = {1}, isActivate = {2}", gameObject.name, isFirstActivate, isActivate);
             }
             else
+            {
                 isActivate = isFirstActivate = false;
+                time = 0;
+            }
         }
         else
+        {
+            GetComponent<AudioSource>().mute = true;
             isActivate = isFirstActivate = false;
+            time = 0;
+        }
     }
 
     void rotation() {
