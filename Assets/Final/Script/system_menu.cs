@@ -41,6 +41,7 @@ public class system_menu : MonoBehaviour {
         Material skybox = RenderSettings.skybox;
         skybox.SetFloat("_Rotation", 0);
         skybox.SetFloat("_Exposure", 1);
+        skybox.SetColor("_Tiny", new Color(50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f));
     }
 
     public void applySystemPause(bool system_pause)
@@ -53,6 +54,7 @@ public class system_menu : MonoBehaviour {
         }
         else
         {
+            changeMode(-1);
             closeSubMenu();
             Destroy(GameObject.Find("Dropdown List"));
         }
