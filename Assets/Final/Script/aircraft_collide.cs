@@ -10,7 +10,8 @@ public class aircraft_collide : MonoBehaviour {
     public float animation_time;
 
     public float time;
-    
+
+    public List<GameObject> lights;
 
     private system_menu system_menu;
     private PauseSystem pasuse_system;
@@ -21,10 +22,10 @@ public class aircraft_collide : MonoBehaviour {
         pasuse_system = GameObject.Find("Menu").GetComponent<PauseSystem>();  
 
 
-        GameObject lights = GameObject.Find("Lights");
-        for (int i = 0; i < lights.transform.childCount; i++)
+        //GameObject lights = GameObject.Find("Lights");
+        for (int i = 0; i < lights.Count; i++)
         {
-            lights.transform.GetChild(i).GetComponent<light_collided>().animation_time = animation_time;
+            lights[i].GetComponent<light_collided>().animation_time = animation_time;
         }
         
     }
@@ -56,12 +57,17 @@ public class aircraft_collide : MonoBehaviour {
 
     public void collide_rock(GameObject g)
     {
+        //Debug.LogFormat("Aircraft collide with rock {0}", g.name);
         isCollided = true;
 
-        GameObject lights = GameObject.Find("Lights");
-        for (int i = 0; i < lights.transform.childCount; i++)
+        //GameObject lights = GameObject.Find("Lights");
+        //for (int i = 0; i < lights.transform.childCount; i++)
+        //{
+        //    lights.transform.GetChild(i).GetComponent<light_collided>().isCollided = true;
+        //}
+        for (int i = 0; i < lights.Count; i++)
         {
-            lights.transform.GetChild(i).GetComponent<light_collided>().isCollided = true;
+            lights[i].GetComponent<light_collided>().isCollided = true;
         }
 
         if (collidedObject != g.name)

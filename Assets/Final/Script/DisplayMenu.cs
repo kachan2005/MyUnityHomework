@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DisplayPurchaseList : MonoBehaviour {
+public class DisplayMenu : MonoBehaviour {
 
     [SerializeField]
     private List<GameObject> objects;
 
-    private bool displayed = false;
+    public bool displayed = false;
 
     // Use this for initialization
     void Start () {
@@ -18,30 +18,35 @@ public class DisplayPurchaseList : MonoBehaviour {
 	void Update () {
 		
 	}
-
-    public void toggleDisplay() {
+    
+    public void toggleDisplay()
+    {
         displayList(!displayed);
     }
 
-    public void displayList(bool isDisplay) {
+    public void displayList(bool isDisplay)
+    {
         displayed = isDisplay;
         transform.GetChild(0).GetComponent<Canvas>().enabled = isDisplay;
 
-        for(int i = 0; i < objects.Count; i++) {
+        for (int i = 0; i < objects.Count; i++)
+        {
             renderObject(objects[i].transform, isDisplay);
         }
-        
+
     }
 
-    void renderObject(Transform t, bool isRender) {
+    void renderObject(Transform t, bool isRender)
+    {
 
         if (t.GetComponent<Renderer>() != null)
             t.GetComponent<Renderer>().enabled = isRender;
 
 
-        for (int i = 0; i < t.childCount; i++) {
+        for (int i = 0; i < t.childCount; i++)
+        {
             renderObject(t.GetChild(i), isRender);
-        }    
+        }
 
     }
 }

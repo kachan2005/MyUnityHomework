@@ -7,6 +7,7 @@ TagManager:
   - coin
   - rock
   - selectable
+  - changeable
   layers:
   - Default
   - TransparentFX

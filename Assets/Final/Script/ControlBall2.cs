@@ -7,8 +7,6 @@ public class ControlBall2 : MonoBehaviour {
     public float maxAngle;
     public Color activeColor;
     private Color originalColor;
-    
-
 
     GameObject aircraft;
 
@@ -18,6 +16,8 @@ public class ControlBall2 : MonoBehaviour {
     private bool isActivate;
     private Vector3 lastPosition;
     private Vector3 currentPosition;
+
+    public bool system_pause;
     // Use this for initialization
     void Start ()
     {
@@ -60,6 +60,8 @@ public class ControlBall2 : MonoBehaviour {
 
     private void OnTriggerStay(Collider other)
     {
+        if (system_pause) return;
+         
         if(other.gameObject.name == "Laser")
         {
             //Debug.LogFormat("{0} is trigger by {1}", gameObject.name, other.gameObject.name);
@@ -78,5 +80,11 @@ public class ControlBall2 : MonoBehaviour {
     private void OnTriggerExit(Collider other)
     {
         isTrigger = false;
+    }
+
+    public void applySystemPause(bool isPause)
+    {
+        GetComponent<Renderer>().enabled = !isPause;
+        system_pause = isPause;
     }
 }

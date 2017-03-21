@@ -20,6 +20,7 @@ public class light_collided : MonoBehaviour {
 	void Update () {
         if (isCollided)
         {
+            //Debug.LogFormat("{0} get collided: time = {1}", gameObject.name, time);
             time += Time.deltaTime;
             Color c;
             if( time < animation_time)

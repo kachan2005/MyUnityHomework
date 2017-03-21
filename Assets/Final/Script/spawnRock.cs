@@ -21,6 +21,7 @@ public class spawnRock : MonoBehaviour {
 
     public int count;
     public int total_count = 0;
+    public int max_Count;
 
     public bool system_pause = true;
 
@@ -35,6 +36,7 @@ public class spawnRock : MonoBehaviour {
 
                 for (float z = -z_size; z < z_size - step; z += step)
                 {
+                    if (count > max_Count) return;
                     int hasObject = (int)(Random.Range(0, spawnRatio));
                     if (hasObject > 4)
                         continue;
@@ -58,7 +60,12 @@ public class spawnRock : MonoBehaviour {
 
                         newObject = GameObject.Instantiate(spawnObject, position, rotation) as GameObject;
                         newObject.transform.parent = checkpoints.transform;
-                        newObject.name = "Object " + total_count++;
+
+                        if (objectType > 8)
+                            newObject.name = "Coin " + total_count++;
+                        else
+                            newObject.name = "Initial Rock " + total_count++;
+                        count++;
                     }
 
                 }
@@ -82,6 +89,8 @@ public class spawnRock : MonoBehaviour {
 
         for (int i = 0; i < hasObject; i++)
         {
+            if (count > max_Count) return;
+
             int objectType = (int)(Random.Range(0, 10));
             Object spawnObject = rock;
             if (objectType > 8)
@@ -99,7 +108,15 @@ public class spawnRock : MonoBehaviour {
 
             newObject = GameObject.Instantiate(spawnObject, position, rotation) as GameObject;
             newObject.transform.parent = checkpoints.transform;
-            newObject.name = "Object " + total_count++;
+            //newObject.name = "Object " + total_count++;
+            if (objectType > 8)
+                newObject.name = "Coin " + total_count++;
+            else
+            {
+                newObject.name = "Rock " + total_count++;
+                newObject.GetComponent<RockAction>().pauseRock(system_pause);
+            }
+
             total_count = total_count % 100000;
         }
     }

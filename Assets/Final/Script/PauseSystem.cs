@@ -18,6 +18,8 @@ public class PauseSystem : MonoBehaviour {
 
         systemPause = true;
         updateSystemPause();
+
+        GameObject.Find("System_Menu").GetComponent<system_menu>().closeSubMenu();
     }
 	
 	// Update is called once per frame
@@ -53,21 +55,15 @@ public class PauseSystem : MonoBehaviour {
         for (int i = 0; i < checkpoints.transform.childCount; i++)
         {
             RockAction r = checkpoints.transform.GetChild(i).GetComponent<RockAction>();
-            if (r != null) r.system_pause = systemPause;
+            if (r != null) r.pauseRock(systemPause);
         }
 
-        GameObject.Find("display_coin").GetComponent<Renderer>().enabled = systemPause;
-        GameObject canvas = GameObject.Find("System_Menu").transform.GetChild(0).gameObject;
-        canvas.GetComponent<Canvas>().enabled = systemPause;
-        
-        if(systemPause == false) {
-            Transform p = GameObject.Find("Purchase_Lists").transform;
-            for(int i = 0; i < p.childCount; i++) {
-                if(p.GetComponent<DisplayPurchaseList>() != null) {
-                    p.GetComponent<DisplayPurchaseList>().displayList(false);
-                }
-            }
-        }
+        GameObject.Find("ControlBall").GetComponent<ControlBall2>().applySystemPause(systemPause);
+
+        GameObject.Find("System_Menu").GetComponent<system_menu>().applySystemPause(systemPause);
+
+
+        GameObject.Find("SelectBall").GetComponent<SelectObject>().applySystemPause(systemPause);
     }
 
 

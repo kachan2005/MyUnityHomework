@@ -5,8 +5,6 @@ using UnityStandardAssets.Utility;
 
 public class RockAction : MonoBehaviour {
     
-    ConstantForce c;
-    Rigidbody r;
     public Vector3 force;
     public Vector3 velocity;
     public int collideCount;
@@ -16,65 +14,42 @@ public class RockAction : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        r = GetComponent<Rigidbody>();
-        c = GetComponent<ConstantForce>();
-        c.force = new Vector3(
+        GetComponent<ConstantForce>().force = new Vector3(
                 Random.Range(-80, 80),
                 Random.Range(-80, 80),
                 Random.Range(-80, 80)
             );
 
-        system_pause = true;
-        prev_pause = false;
+        //   c.force = new Vector3(
+        //    Random.Range(-1, 1),
+        //    Random.Range(-1, 1),
+        //    Random.Range(-1, 1)
+        //);
 
 
-        if (system_pause != prev_pause)
-        {
-            if (system_pause)
-            {
-                velocity = r.velocity;
-                r.velocity = new Vector3();
-                storeForce();
-
-                GetComponent<Collider>().isTrigger = true;
-                r.isKinematic = true;
-            }
-            else
-            {
-                GetComponent<Collider>().isTrigger = false;
-                r.isKinematic = false;
-
-                r.velocity = velocity;
-                restoreForce();
-            }
-            prev_pause = system_pause;
-        }
-
+        system_pause = GameObject.Find("Menu").GetComponent<PauseSystem>().systemPause;
+        pauseRock(system_pause);
     }
 	
-	// Update is called once per frame
-	void Update ()
+
+    public void pauseRock(bool isPause)
     {
-        if (system_pause != prev_pause)
+        if (isPause)
         {
-            if (system_pause)
-            {
-                velocity = r.velocity;
-                r.velocity = new Vector3();
-                storeForce();
+            velocity = GetComponent<Rigidbody>().velocity;
+            GetComponent<Rigidbody>().velocity = new Vector3();
+            storeForce();
 
-                GetComponent<Collider>().isTrigger = true;
-                r.isKinematic = true;
-            }
-            else
-            {
-                GetComponent<Collider>().isTrigger = false;
-                r.isKinematic = false;
+            GetComponent<Collider>().isTrigger = true;
+            GetComponent<Rigidbody>().isKinematic = true;
+        }
+        else
+        {
+            GetComponent<Collider>().isTrigger = false;
+            GetComponent<Rigidbody>().isKinematic = false;
 
-                r.velocity = velocity;
-                restoreForce();
-            }
-            prev_pause = system_pause;
+            GetComponent<Rigidbody>().velocity = velocity;
+            restoreForce();
         }
     }
 
@@ -82,6 +57,7 @@ public class RockAction : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
+        //Debug.LogFormat("{0} collide with object {1}, time remain = {2}", gameObject.name, collision.gameObject.name, collideCount);
 
         if (isAircraft(collision.gameObject.transform))
         {
@@ -92,16 +68,13 @@ public class RockAction : MonoBehaviour {
             return;
         }
 
-
-        //Debug.LogFormat("{0} collide with object {1}, time remain = {2}", gameObject.name, collision.gameObject.name, collideCount);
         if ( collideCount-- <= 0)
         {
             Destroy(gameObject);
             return;
         }
-
-        ConstantForce c = GetComponent<ConstantForce>();
-        Vector3 newForce = c.force;
+        
+        Vector3 newForce = GetComponent<ConstantForce>().force;
 
         switch (collision.gameObject.name)
         {
@@ -121,7 +94,7 @@ public class RockAction : MonoBehaviour {
         }
         //Debug.LogFormat("Before force = ({0}. {1}, {2})", c.force.x, c.force.y, c.force.z);
         //Debug.LogFormat("After force = ({0}. {1}, {2})", newForce.x, newForce.y, newForce.z);
-        c.force = newForce;
+        GetComponent<ConstantForce>().force = newForce;
     }
 
     private bool isAircraft(Transform t)
@@ -138,11 +111,11 @@ public class RockAction : MonoBehaviour {
     }
 
     public void storeForce() {
-        force = c.force;
-        c.force = new Vector3();
+        force = GetComponent<ConstantForce>().force;
+        GetComponent<ConstantForce>().force = new Vector3();
     }
 
     public void restoreForce() {
-        c.force = force;
+        GetComponent<ConstantForce>().force = force;
     }
 }

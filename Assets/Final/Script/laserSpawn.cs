@@ -7,26 +7,27 @@ public class laserSpawn : MonoBehaviour {
 
     public GameObject crosshair;
     public GameObject menuCanvas;
+    
+    public Material glass_material;
 
     private LineRenderer l;
-
-    public bool debug = false;
-
-
-    public Material glass_material;
-    
-    private float time = 0;
+    private PauseSystem pause;
+    private system_menu system;
 
     // Use this for initialization
     void Start () {
         l = GetComponent<LineRenderer>();
         l.enabled = false;
+
+        pause = GameObject.Find("Menu").GetComponent<PauseSystem>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))  //used for menu selection or interaction
+        if (pause.systemPause && 
+            
+            OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))  //used for menu selection or interaction
         {
             l.enabled = true;
             Vector3 coord = menuCanvas.transform.position;
@@ -45,11 +46,7 @@ public class laserSpawn : MonoBehaviour {
                 float t = Vector3.Dot(diff, normal) / denom;
 
                 Vector3 p = a + ray * t;
-                if(debug)
-                    DrawLine(a, b, Color.cyan);
-
-                else
-                    DrawLine(a, p, Color.cyan);
+                DrawLine(a, p, Color.cyan);
 
                 crosshair.transform.position = p;
                 Vector3 lc = crosshair.transform.localPosition;

@@ -12,8 +12,11 @@ public class Crosshair : MonoBehaviour {
 
     private GameObject inChart;
 
-	// Use this for initialization
-	void Start () {
+    public float sliderMaxPostion;
+    public float sliderMinPostion;
+
+    // Use this for initialization
+    void Start () {
         
     }
 
@@ -30,27 +33,37 @@ public class Crosshair : MonoBehaviour {
             activative = false;
         }
     }
-
-
+    
 
     void OnCollisionEnter2D(Collision2D coll)
     {
 
+        //Debug.LogFormat("Crosshair enter object {0}", coll.gameObject.name);
         if (coll.gameObject.tag == "selectable")
         {
             //Debug.LogFormat("Crosshair enter select object {0}", coll.gameObject.name);
             GameObject d = coll.gameObject;
-            if(d.GetComponent<Image>() == null) {
-                for(int i = 0; i < d.transform.childCount; i++) {
-                    if(d.transform.GetChild(i).GetComponent<Image>() != null) {
+            if(d.GetComponent<Image>() != null)
+            {
+                d.GetComponent<Image>().color = Color.red;
+                d.GetComponent<Image>().material = null;
+            }
+            else if (d.GetComponent<Slider>() != null)
+            {
+                ColorBlock colors = d.GetComponent<Slider>().colors;
+                colors.normalColor = Color.red;
+                d.GetComponent<Slider>().colors = colors;
+            }
+            else
+            {
+                for (int i = 0; i < d.transform.childCount; i++)
+                {
+                    if (d.transform.GetChild(i).GetComponent<Image>() != null)
+                    {
                         d.transform.GetChild(i).GetComponent<Image>().color = Color.red;
                         d.transform.GetChild(i).GetComponent<Image>().material = null;
                     }
                 }
-            }
-            else {
-                d.GetComponent<Image>().color = Color.red;
-                d.GetComponent<Image>().material = null;
             }
         }
 
@@ -58,12 +71,45 @@ public class Crosshair : MonoBehaviour {
 
     private void OnCollisionStay2D(Collision2D coll)
     {
-
-        Debug.LogFormat("Crosshair select object {0}", coll.gameObject.name);
+        //Debug.LogFormat("Crosshair select object {0}", coll.gameObject.name);
         if (activative)
         {
+
+            if (coll.gameObject.name == "RotateY")
+            {
+                GameObject pos = coll.transform.GetChild(0).gameObject;
+                pos.transform.position = transform.position;
+                Debug.LogFormat("    Slider 1 : get pos object");
+
+                Vector3 position = pos.transform.localPosition;
+                position.x = position.x > sliderMaxPostion ? sliderMaxPostion : (position.x < sliderMinPostion ? sliderMinPostion : position.x);
+                position.y = 0;
+                position.z = 0;
+                pos.transform.localPosition = position;
+                Debug.LogFormat("    Slider 2 : local position = ({0}, {1}, {2})", position.x, position.y, position.z);
+
+                Slider s = coll.gameObject.GetComponent<Slider>();
+                float value = (int)((position.x - sliderMinPostion) / (sliderMaxPostion - sliderMinPostion) * (s.maxValue - s.minValue));
+                s.value = value;
+                coll.transform.GetChild(5).GetComponent<Text>().text = "" + value;
+                Debug.LogFormat("    Slider 3 : update slide value = {0}", value);
+
+                GameObject.Find("ManipulationMenu").GetComponent<Manipulation>().RotateY(value);
+            }
+
+
+            //Avoid accidently activate that menu is not displayed
+            Transform p = coll.transform;
+            while(p != null)
+            {
+                if (p.GetComponent<DisplayMenu>() != null) break;
+                p = p.parent;
+            }
+            if (p == null || p.GetComponent<DisplayMenu>().displayed == false) return;
+            
             if (trigger) return;
             trigger = true;
+
             if (coll.gameObject.name == "Dropdown")
             {
                 Dropdown d = coll.gameObject.GetComponent<Dropdown>();
@@ -76,63 +122,86 @@ public class Crosshair : MonoBehaviour {
             }
 
             //Debug.LogFormat("Crosshair select object {0} and trigger", coll.gameObject.name);
+            
+            if (coll.gameObject.name == "Item 0: Tile") {
+                inChart = null;
+                //GameObject.Find("System_Menu").GetComponent<system_menu>().closeSubMenu();
+                GameObject.Find("Purchase_List1").GetComponent<DisplayMenu>().toggleDisplay();
+            }
+
+            if (purchaseList1(coll)) // it is select from subMenu, so close out.
+                return;
+            
             if (coll.gameObject.name == "Quit")
             {
                 inChart = null;
                 GameObject.Find("Menu").GetComponent<PauseSystem>().updateSystemPause(false);
             }
-            
-            if (coll.gameObject.name == "Item 0: Tile") {
+
+            if (coll.gameObject.name == "Teleport Mode")
+            {
                 inChart = null;
-                GameObject.Find("Purchase_List1").GetComponent<DisplayPurchaseList>().toggleDisplay();
+                GameObject.Find("System_Menu").GetComponent<system_menu>().changeMode(1);
             }
 
-            float money = GameObject.Find("System_Menu").GetComponent<system_menu>().money;
-            if (coll.gameObject.name == "Tile 1" && money > 200)
+            if (coll.gameObject.name == "Select Mode")
             {
-                coll.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = true;
-                if (inChart != null) inChart.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = false;
-                inChart = coll.gameObject;
+                inChart = null;
+                GameObject.Find("System_Menu").GetComponent<system_menu>().changeMode(2);
             }
-            if (coll.gameObject.name == "Tile 2" && money > 400)
+
+            if (coll.gameObject.name == "Move Object")
             {
-                coll.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = true;
-                if (inChart != null) inChart.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = false;
-                inChart = coll.gameObject;
+                inChart = null;
+                GameObject.Find("System_Menu").GetComponent<system_menu>().changeMode(3);
             }
-            if (coll.gameObject.name == "Tile 3"  && money > 600)
+
+            if (coll.gameObject.name == "Quit Select")
             {
-                coll.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = true;
-                if (inChart != null) inChart.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = false;
-                inChart = coll.gameObject;
+                coll.transform.parent.parent.parent.GetComponent<DisplayMenu>().displayList(false);
             }
-            if (coll.gameObject.name == "Tile 4" && money > 800)
-            {
-                coll.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = true;
-                if (inChart != null) inChart.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = false;
-                inChart = coll.gameObject;
-            }
-            if (coll.gameObject.name == "Tile 5" && money > 1000)
-            {
-                coll.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = true;
-                if (inChart != null) inChart.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = false;
-                inChart = coll.gameObject;
-            }
-
-
-
-            if (coll.gameObject.name == "Purchase") {
-                checkout();
-                coll.transform.parent.parent.parent.GetComponent<DisplayPurchaseList>().displayList(false);
-            }
-
-
-            if (coll.gameObject.name == "Quit_Purchase")
-            {
-                coll.transform.parent.parent.parent.GetComponent<DisplayPurchaseList>().displayList(false);
-            }
-
         }
+    }
+
+
+
+
+    private bool purchaseList1(Collision2D coll) //handle 1st subMenu purchaseList 1
+    {
+        float money = GameObject.Find("System_Menu").GetComponent<system_menu>().money;
+        if (coll.gameObject.name == "Tile 1" && money > 200 ||
+            coll.gameObject.name == "Tile 2" && money > 400 ||
+            coll.gameObject.name == "Tile 3" && money > 600 ||
+            coll.gameObject.name == "Tile 4" && money > 800 ||
+            coll.gameObject.name == "Tile 5" && money > 1000
+
+            )
+        {
+            coll.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = true;
+            if (inChart != null) inChart.transform.GetChild(0).GetComponent<AutoMoveAndRotate>().enabled = false;
+            inChart = coll.gameObject;
+
+            return true;
+        }
+
+
+
+        if (coll.gameObject.name == "Purchase")
+        {
+            checkout();
+            coll.transform.parent.parent.parent.GetComponent<DisplayMenu>().displayList(false);
+
+            return true;
+        }
+
+
+        if (coll.gameObject.name == "Quit_Purchase")
+        {
+            coll.transform.parent.parent.parent.GetComponent<DisplayMenu>().displayList(false);
+            return true;
+        }
+        
+        return false;
     }
 
     private void checkout() {
@@ -173,7 +242,18 @@ public class Crosshair : MonoBehaviour {
         if (coll.gameObject.tag == "selectable")
         {
             GameObject d = coll.gameObject;
-            if (d.GetComponent<Image>() == null)
+            if (d.GetComponent<Image>() != null)
+            {
+                d.GetComponent<Image>().color = Color.white;
+                d.GetComponent<Image>().material = glass_material;
+            }
+            else if (d.GetComponent<Slider>() != null)
+            {
+                ColorBlock colors = d.GetComponent<Slider>().colors;
+                colors.normalColor = Color.white;
+                d.GetComponent<Slider>().colors = colors;
+            }
+            else
             {
                 for (int i = 0; i < d.transform.childCount; i++)
                 {
@@ -183,11 +263,6 @@ public class Crosshair : MonoBehaviour {
                         d.transform.GetChild(i).GetComponent<Image>().material = glass_material;
                     }
                 }
-            }
-            else
-            {
-                d.GetComponent<Image>().color = Color.white;
-                d.GetComponent<Image>().material = glass_material;
             }
         }
 
