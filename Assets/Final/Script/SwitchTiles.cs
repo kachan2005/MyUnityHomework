@@ -26,18 +26,6 @@ public class SwitchTiles : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if( GameObject.Find("Menu").GetComponent<PauseSystem>().systemPause == false) {
-            time += Time.deltaTime;
-            GetComponent<AudioSource>().mute = false;
-            if(time > 4) {
-                GetComponent<AudioSource>().Play();
-                time = 0;
-            }
-
-        }
-        else {
-            GetComponent<AudioSource>().mute = true;
-        }
 	}
 
     public void switchTiles(Material m) {

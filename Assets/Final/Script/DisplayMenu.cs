@@ -36,6 +36,8 @@ public class DisplayMenu : MonoBehaviour {
 
     }
 
+    
+
     void renderObject(Transform t, bool isRender)
     {
         //Debug.LogFormat("{0}:  renderObject name: {1}", isRender, t.name);
